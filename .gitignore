@@ -1,0 +1,6 @@
+node_modules
+*.sqlite
+.env.*
+.git
+._.gitignore
+._.git

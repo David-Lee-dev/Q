@@ -1,0 +1,43 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "ignorePatterns": ["dist/", "node_modules/"],
+  "plugins": [
+      "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/no-misused-promises": 0,
+    "@typescript-eslint/no-unsafe-member-access": 1,
+    "@typescript-eslint/no-unsafe-call": 1,
+    "@typescript-eslint/no-unsafe-assignment": 1,
+    "@typescript-eslint/restrict-template-expressions": 1,
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-unsafe-argument": 1,
+    "@typescript-eslint/no-unsafe-return": 1,
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  }
+}
