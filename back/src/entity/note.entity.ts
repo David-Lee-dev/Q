@@ -18,11 +18,13 @@ export class NoteEntity extends BaseEntity implements INote {
   @Column({ name: 'content' })
   content: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.notes)
+  @ManyToOne(() => UserEntity, (user) => user.notes, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user' })
   user?: UserEntity;
 
-  @ManyToOne(() => BoardEntity, (board) => board.notes)
+  @ManyToOne(() => BoardEntity, (board) => board.notes, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'board' })
   board?: BoardEntity;
 }

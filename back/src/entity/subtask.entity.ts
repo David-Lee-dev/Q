@@ -20,7 +20,7 @@ export class SubtaskEntity extends BaseEntity implements ISubtask {
   @Column({ name: 'done', default: false })
   done: boolean;
 
-  @ManyToOne(() => TaskEntity, (task) => task.subtasks)
+  @ManyToOne(() => TaskEntity, (task) => task.subtasks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'task' })
   task?: TaskEntity;
 }

@@ -16,17 +16,15 @@ export class UserEntity extends BaseEntity implements IUser {
   @Column({ name: 'tutorial', default: false })
   tutorial: boolean;
 
-  @OneToMany(() => TaskEntity, (task) => task.user, { onDelete: 'SET NULL' })
+  @OneToMany(() => TaskEntity, (task) => task.user)
   @JoinColumn({ name: 'tasks' })
   tasks?: TaskEntity[];
 
-  @OneToMany(() => NoteEntity, (note) => note.user, { onDelete: 'SET NULL' })
+  @OneToMany(() => NoteEntity, (note) => note.user)
   @JoinColumn({ name: 'notes' })
   notes?: NoteEntity[];
 
-  @OneToMany(() => UserToBoardEntity, (userToBoard) => userToBoard.user, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => UserToBoardEntity, (userToBoard) => userToBoard.user)
   @JoinColumn({ name: 'userToBoard' })
   userToBoard: UserToBoardEntity[];
 }

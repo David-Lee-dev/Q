@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -26,17 +27,21 @@ export class TaskEntity extends BaseEntity implements ITask {
   @Column({ name: 'in_progress', default: false })
   in_progress: boolean;
 
-  @OneToMany(() => SubtaskEntity, (subtask) => subtask.task, {
-    onDelete: 'CASCADE',
-  })
+  @Column({ name: 'due_date' })
+  due_date: Date;
+
+  @CreateDateColumn({ name: 'create_date' })
+  create_date: Date;
+
+  @OneToMany(() => SubtaskEntity, (subtask) => subtask.task)
   @JoinColumn({ name: 'subtasks' })
   subtasks?: SubtaskEntity[];
 
-  @ManyToOne(() => BoardEntity, (board) => board.tasks)
+  @ManyToOne(() => BoardEntity, (board) => board.tasks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'board' })
   board?: BoardEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.tasks)
+  @ManyToOne(() => UserEntity, (user) => user.tasks, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user' })
   user?: UserEntity;
 }

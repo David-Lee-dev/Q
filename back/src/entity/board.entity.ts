@@ -19,17 +19,15 @@ export class BoardEntity extends BaseEntity implements IBoard {
   @Column({ name: 'title' })
   title: string;
 
-  @OneToMany(() => TaskEntity, (task) => task.board, { onDelete: 'CASCADE' })
+  @OneToMany(() => TaskEntity, (task) => task.board)
   @JoinColumn({ name: 'tasks' })
   tasks?: TaskEntity[];
 
-  @OneToMany(() => NoteEntity, (note) => note.board, { onDelete: 'CASCADE' })
+  @OneToMany(() => NoteEntity, (note) => note.board)
   @JoinColumn({ name: 'notes' })
   notes?: NoteEntity[];
 
-  @OneToMany(() => UserToBoardEntity, (userToBoard) => userToBoard.board, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => UserToBoardEntity, (userToBoard) => userToBoard.board)
   @JoinColumn({ name: 'userToBoard' })
   userToBoard: UserToBoardEntity[];
 }

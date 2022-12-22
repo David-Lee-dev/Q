@@ -38,8 +38,8 @@ export const errorCode: IErrorCode = {
     status: 500,
     message: 'server error, fail to save board',
   },
-  BRC05: {
-    code: 'BRC05',
+  BRR05: {
+    code: 'BRR05',
     status: 500,
     message: 'server error, fail to get board',
   },

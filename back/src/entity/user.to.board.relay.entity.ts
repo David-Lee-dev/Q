@@ -13,11 +13,15 @@ export class UserToBoardEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ name: 'pk' })
   pk: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.userToBoard)
+  @ManyToOne(() => UserEntity, (user) => user.userToBoard, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user' })
   user: UserEntity;
 
-  @ManyToOne(() => BoardEntity, (board) => board.userToBoard)
+  @ManyToOne(() => BoardEntity, (board) => board.userToBoard, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'board' })
   board: BoardEntity;
 }
