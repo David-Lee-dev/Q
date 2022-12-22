@@ -31,7 +31,7 @@ interface IErrorCode {
  *              |________ B: board, U: user, T: task, S: subtask, N: note
  */
 export const errorCode: IErrorCode = {
-  //user repository error
+  //repository
   //board
   BRC15: {
     code: 'BRC15',
@@ -59,8 +59,8 @@ export const errorCode: IErrorCode = {
     status: 500,
     message: 'server error, fail to save user',
   },
-  URC05: {
-    code: 'URC05',
+  URR05: {
+    code: 'URR05',
     status: 500,
     message: 'server error, fail to get user',
   },
@@ -74,5 +74,4 @@ export const errorCode: IErrorCode = {
     status: 500,
     message: 'server error, fail to remove user',
   },
-  //
 };

@@ -40,46 +40,25 @@ describe('board repository test', () => {
 
   describe('saveBoard', () => {
     test('normal', async () => {
-      const testboard = {
-        serial: 'testserialnumber',
+      const result = await repository.saveBoard({
+        serial: 'serial',
         title: 'title',
-      };
-
-      const result = await repository.saveBoard(testboard);
+      });
       expect(result instanceof Error).toBeFalsy();
     });
 
     test('send transaction with user entity', async () => {
-      const testboard = {
-        serial: 'testserialnumber',
-        title: 'title',
-      };
-      const testuser = {
-        email: 'test@test.com',
-        password: 'testpassword',
+      await database.manager.save(UserEntity, {
+        email: 'test',
+        password: 'test',
         tutorial: true,
-      };
-
-      await database.manager.save(UserEntity, testuser);
-
-      const result = await repository.saveBoard(testboard, testuser);
-      expect(result instanceof Error).toBeFalsy();
-    });
-  });
-
-  describe('getBoards', () => {
-    test('normal', async () => {
-      const user1 = await saveUserMock('test1', 'test1');
-      const user2 = await saveUserMock('test1', 'test1');
-      const board = await saveBoardMock('serial1', 'title1', user1, user2);
-
-      const boards1 = await repository.getBoards({
-        joinOption: { user: true },
       });
 
-      expect(board.serial).toEqual('serial1');
-      expect(board.title).toEqual('title1');
-      expect(boards1[0].users.length).toBe(2);
+      const result = await repository.saveBoard({
+        serial: 'serial',
+        title: 'title',
+      });
+      expect(result instanceof Error).toBeFalsy();
     });
   });
 

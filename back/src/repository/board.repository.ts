@@ -43,35 +43,6 @@ class BoardRepository {
     }
   }
 
-  public async getBoards(readOption?: IBoardReadOption) {
-    try {
-      const query = this.boardRepository
-        .createQueryBuilder('board')
-        .select(['board.serial', 'board.title']);
-
-      if (readOption?.joinOption?.user) {
-        query
-          .leftJoinAndSelect('board.userToBoard', 'userToBoard')
-          .addSelect(['user.email'])
-          .leftJoin('userToBoard.user', 'user');
-      }
-
-      const results = await query.getMany();
-
-      return results.map((board) => {
-        return {
-          serial: board.serial,
-          title: board.title,
-          users: board.userToBoard
-            ? board.userToBoard.map((item) => item.user)
-            : [],
-        };
-      });
-    } catch (error) {
-      throw new HttpException('BRR05');
-    }
-  }
-
   public async getBoard(serial: string, readOption?: IBoardReadOption) {
     try {
       const query = this.boardRepository
@@ -162,7 +133,6 @@ class BoardRepository {
 
       return await executeTransaction(qr, query);
     } catch (error) {
-      console.log(error);
       if (error instanceof TransactionException) throw error;
       throw new HttpException('BRD15');
     }

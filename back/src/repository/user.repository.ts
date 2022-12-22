@@ -1,116 +1,92 @@
 import { Repository } from 'typeorm';
 import database from '../data/database';
 import { UserEntity } from '../entity/user.entity';
-import { HttpException } from '../exception/Exception';
-import { IUser, IUserReadOption } from '../interface/user.interface';
+import { UserToBoardEntity } from '../entity/user.to.board.relay.entity';
+import { HttpException, TransactionException } from '../exception/Exception';
+import { IUser } from '../interface/user.interface';
+import { executeTransaction } from '../lib/executeTransaction';
 
 class UserRepository {
-  public dataSource: Repository<UserEntity>;
+  public userRepository: Repository<UserEntity>;
+  public relayRepository: Repository<UserToBoardEntity>;
 
   constructor() {
-    this.dataSource = database.getRepository(UserEntity);
+    this.userRepository = database.getRepository(UserEntity);
+    this.relayRepository = database.getRepository(UserToBoardEntity);
   }
 
-  public saveUser = async (user: IUser) => {
+  public async saveUser(user: IUser) {
     try {
-      return await this.dataSource.save(user);
+      const qr = database.createQueryRunner();
+
+      const query = this.userRepository
+        .createQueryBuilder('user', qr)
+        .insert()
+        .into(UserEntity)
+        .values({ ...user });
+
+      return await executeTransaction(qr, query);
     } catch (error) {
+      if (error instanceof TransactionException) throw error;
       throw new HttpException('URC15');
     }
-  };
+  }
 
-  public getUsers = async (readOption?: IUserReadOption) => {
+  public async getUser(email: string) {
     try {
-      return await this.dataSource.find({
-        select: {
-          email: true,
-          password: readOption.pwdExposure,
-          boards: readOption.joinOption.board && {
-            serial: true,
-            title: true,
-          },
-          tasks: readOption.joinOption.task && {
-            pk: true,
-            content: true,
-            done: true,
-            in_progress: true,
-            subtasks: true,
-          },
-          notes: readOption.joinOption.note && {
-            pk: true,
-            content: true,
-          },
-        },
-        relations: {
-          boards: readOption.joinOption.board,
-          tasks: readOption.joinOption.task,
-          notes: readOption.joinOption.note,
-        },
-        where: readOption.boardSerial && {
-          boards: {
-            serial: readOption.boardSerial,
-          },
-        },
-      });
+      const result = await this.userRepository
+        .createQueryBuilder('user')
+        .select(['user.email'])
+        .leftJoinAndSelect('user.userToBoard', 'userToBoard')
+        .leftJoinAndSelect('userToBoard.board', 'board')
+        .where('email=:email', { email })
+        .getOne();
+
+      return {
+        email: email,
+        boards: result.userToBoard
+          ? result.userToBoard.map((item) => item.board)
+          : [],
+      };
     } catch (error) {
-      throw new HttpException('URC05');
+      console.log(error);
+      throw new HttpException('URR05');
     }
-  };
+  }
 
-  public getUser = async (email: string, readOption?: IUserReadOption) => {
+  public async editUser(user: IUser) {
     try {
-      return await this.dataSource.findOne({
-        select: {
-          email: true,
-          password: readOption.pwdExposure,
-          boards: readOption.joinOption.board && {
-            serial: true,
-            title: true,
-          },
-          tasks: readOption.joinOption.task && {
-            pk: true,
-            content: true,
-            done: true,
-            in_progress: true,
-            subtasks: true,
-          },
-          notes: readOption.joinOption.note && {
-            pk: true,
-            content: true,
-          },
-        },
-        relations: {
-          boards: readOption.joinOption.board,
-          tasks: readOption.joinOption.task,
-          notes: readOption.joinOption.note,
-        },
-        where: {
-          email,
-        },
-      });
+      const qr = database.createQueryRunner();
+      const query = this.userRepository
+        .createQueryBuilder('user', qr)
+        .update()
+        .set({
+          password: user.password,
+          tutorial: user.tutorial,
+        })
+        .where('email=:email', { email: user.email });
+
+      return await executeTransaction(qr, query);
     } catch (error) {
-      throw new HttpException('URC05');
+      if (error instanceof TransactionException) throw error;
+      throw new HttpException('URR05');
     }
-  };
+  }
 
-  public editUser = async (user: IUser) => {
+  public async removeUser(email: string) {
     try {
-      return await this.dataSource.update(
-        { email: user.email },
-        { password: user.password, tutorial: user.tutorial }
-      );
-    } catch (error) {
-      throw new HttpException('URU15');
-    }
-  };
+      const qr = database.createQueryRunner();
+      const query = this.userRepository
+        .createQueryBuilder('user', qr)
+        .delete()
+        .where('email = :email', { email });
 
-  public removeUser = async (email: string) => {
-    try {
-      return await this.dataSource.delete(email);
+      return await executeTransaction(qr, query);
     } catch (error) {
+      if (error instanceof TransactionException) throw error;
       throw new HttpException('URD15');
     }
-  };
+  }
 }
 
 export default new UserRepository();
